@@ -40,8 +40,11 @@ func DashBlind(err error) {
 //
 // Useful if you want to ignore certain errors, but want to log them.
 func DashStr(err error, prefix string) (errString string) {
+	if prefix != "" {
+		prefix = prefix + ": "
+	}
 	if err != nil {
-		return fmt.Sprintf("%s: %s", prefix, err)
+		return fmt.Sprintf("%s%s", prefix, err)
 	}
 	return ""
 }
@@ -51,8 +54,11 @@ func DashStr(err error, prefix string) (errString string) {
 //
 // Useful if you want to ignore certain errors, but want to log them to Stdout.
 func DashOut(err error, prefix string) (erred bool) {
+	if prefix != "" {
+		prefix = prefix + ": "
+	}
 	if err != nil {
-		fmt.Printf("%s: %s\n", prefix, err)
+		fmt.Printf("%s%s\n", prefix, err)
 		return true
 	}
 	return false
@@ -63,17 +69,23 @@ func DashOut(err error, prefix string) (erred bool) {
 //
 // Useful if you want to ignore certain errors, but want to log them to Stderr.
 func DashErr(err error, prefix string) (erred bool) {
+	if prefix != "" {
+		prefix = prefix + ": "
+	}
 	if err != nil {
-		_, errWrite := fmt.Fprintf(os.Stderr, "%s: %s\n", prefix, err)
+		// _, errWrite :=
+		fmt.Fprintf(os.Stderr, "%s%s\n", prefix, err)
 
-		tolerance := 100 // Doubt FprintF will fail to write -tolerance- times, but...
-		for errWrite != nil {
-			if tolerance <= 0 {
-				break
-			}
-			_, errWrite = fmt.Fprintf(os.Stderr, "Dashorcrash.DashStderr(): %s\n", err)
-			tolerance--
-		} // ... is this necessary?
+		// tolerance := 100 // Doubt FprintF will fail to write -tolerance- times, but...
+		// for errWrite != nil {
+		// 	if tolerance <= 0 {
+		// 		break
+		// 	}
+		// 	_, errWrite = fmt.Fprintf(os.Stderr, "Dashorcrash.DashStderr(): %s\n", err)
+		// 	tolerance--
+		// } // ... is this necessary?
+		// NUKED
+
 		return true
 	}
 	return false
@@ -94,22 +106,24 @@ func Crash(err error) {
 //
 // Useful if you want to terminate on certain errors while logging them to standard out.
 func CrashOut(err error, prefix string) {
+	if prefix != "" {
+		prefix = prefix + ": "
+	}
 	if err != nil {
-		if prefix != "" {
-			log.Fatalf("%s: %s\n", prefix, err)
-		}
-		log.Fatalf("%s\n", err)
+		log.Fatalf("%s%s\n", prefix, err)
 	}
 	return
 }
 
+// CrashErr prints err to standard error if non-nil followed os.Exit(1), else nothing happens.
+//
+// Useful if you want to terminate on certain errors while logging them to standard error.
 func CrashErr(err error, prefix string) {
+	if prefix != "" {
+		prefix = prefix + ": "
+	}
 	if err != nil {
-		if prefix != "" {
-			fmt.Fprintf(os.Stderr, "%s: %s\n", prefix, err)
-		} else {
-			fmt.Fprintf(os.Stderr, "%s\n", err)
-		}
+		fmt.Fprintf(os.Stderr, "%s%s\n", prefix, err)
 		os.Exit(1)
 	}
 }
