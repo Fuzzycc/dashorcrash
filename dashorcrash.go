@@ -38,7 +38,7 @@ func DashBool(err error) (erred bool) {
 // DashBlind ignores any error with no return whatsoever.
 //
 // Run, run and never look back! Aaaaah!
-func DashBlind(err error) {
+func DashNull(err error) {
 	// What did you expect?
 	return
 }
